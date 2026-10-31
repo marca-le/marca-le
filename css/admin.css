@@ -1,15 +1,23 @@
 :root {
-  --primary: #111827;       /* Carbón oscuro principal */
-  --accent: #c9933b;        /* Tono dorado sobrio */
-  --accent-hover: #b38230;
-  --bg-page: #f8fafc;
+  /* Paleta cromática oficial Marca LE: Cero tonos azules */
+  --primary: #141414;          /* Carbón oscuro puro */
+  --topbar-bg: #121212;        /* Fondo barra superior */
+  --sidebar-bg: #181818;       /* Fondo menú lateral */
+  --sidebar-hover: #242424;    /* Hover de elementos */
+  --sidebar-active: #282828;   /* Elemento activo */
+  
+  --accent: #c9933b;           /* Dorado / mostaza corporativo */
+  --accent-hover: #b5812e;
+  
+  --bg-page: #f4f4f5;          /* Gris neutro cálido para el fondo */
   --card-bg: #ffffff;
-  --border: #e2e8f0;
+  --border: #e4e4e7;           /* Bordes limpios sin azul */
   --border-focus: #c9933b;
-  --text: #0f172a;
-  --text-muted: #64748b;
-  --sidebar-bg: #111827;
-  --sidebar-active: #1e293b;
+  
+  --text: #18181b;             /* Texto carbón de alta legibilidad */
+  --text-muted: #71717a;       /* Texto secundario neutro */
+  --danger: #dc2626;
+  --danger-bg: #fef2f2;
 }
 
 * {
@@ -32,9 +40,9 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 20px;
+  padding: 0 16px;
   height: 56px;
-  background: var(--primary);
+  background: var(--topbar-bg);
   color: #ffffff;
   border-bottom: 2px solid var(--accent);
   position: sticky;
@@ -46,7 +54,7 @@ body {
 .topbar-left {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
 }
 
 .hamburger-btn {
@@ -60,22 +68,26 @@ body {
 }
 
 .hamburger-btn .bar {
-  width: 18px;
+  width: 20px;
   height: 2px;
   background-color: #ffffff;
   border-radius: 1px;
 }
 
+/* Alineación exacta de Marca LE con la insignia */
 .brand-title {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
 }
 
 .brand-title h1 {
-  font-size: 1.15rem;
-  font-weight: 700;
+  font-size: 1.25rem;
+  font-weight: 800;
   letter-spacing: 0.5px;
+  margin: 0;
+  padding: 0;
+  line-height: 1;
 }
 
 .brand-title h1 span {
@@ -84,12 +96,14 @@ body {
 
 .badge-role {
   font-size: 0.65rem;
-  background: rgba(255, 255, 255, 0.12);
-  color: #e2e8f0;
-  padding: 2px 6px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #d4d4d8;
+  padding: 3px 7px;
   border-radius: 3px;
   text-transform: uppercase;
   font-weight: 600;
+  letter-spacing: 0.5px;
+  line-height: 1;
 }
 
 .topbar-right {
@@ -99,20 +113,21 @@ body {
 }
 
 .user-greeting {
-  font-size: 0.8rem;
-  color: #cbd5e1;
+  font-size: 0.82rem;
+  color: #a1a1aa;
   display: none;
 }
 
 .btn-store-link {
   color: #ffffff;
   background: var(--accent);
-  padding: 6px 12px;
+  padding: 6px 14px;
   border-radius: 4px;
   text-decoration: none;
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   font-weight: 600;
   transition: background 0.15s ease;
+  white-space: nowrap;
 }
 
 .btn-store-link:hover {
@@ -121,17 +136,18 @@ body {
 
 .btn-logout-admin {
   background: transparent;
-  color: #cbd5e1;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  padding: 5px 10px;
+  color: #a1a1aa;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  padding: 6px 12px;
   border-radius: 4px;
-  font-size: 0.75rem;
+  font-size: 0.78rem;
   cursor: pointer;
   transition: all 0.15s ease;
+  white-space: nowrap;
 }
 
 .btn-logout-admin:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.08);
   color: #ffffff;
 }
 
@@ -147,7 +163,7 @@ body {
 .admin-sidebar {
   width: 240px;
   background: var(--sidebar-bg);
-  padding: 12px 0;
+  padding: 14px 0;
   display: flex;
   flex-direction: column;
   position: fixed;
@@ -157,7 +173,7 @@ body {
   z-index: 999;
   transform: translateX(-100%);
   transition: transform 0.25s ease;
-  border-right: 1px solid #1e293b;
+  border-right: 1px solid #27272a;
 }
 
 .admin-sidebar.show {
@@ -171,7 +187,7 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.45);
+  background: rgba(0, 0, 0, 0.5);
   z-index: 998;
 }
 
@@ -188,10 +204,10 @@ body {
 .menu-item {
   background: none;
   border: none;
-  color: #94a3b8;
+  color: #a1a1aa;
   text-align: left;
   padding: 12px 20px;
-  font-size: 0.85rem;
+  font-size: 0.88rem;
   font-weight: 500;
   cursor: pointer;
   border-left: 3px solid transparent;
@@ -200,8 +216,8 @@ body {
 }
 
 .menu-item:hover {
-  color: #f1f5f9;
-  background: rgba(255, 255, 255, 0.04);
+  color: #fafafa;
+  background: var(--sidebar-hover);
 }
 
 .menu-item.active {
@@ -211,7 +227,7 @@ body {
   font-weight: 600;
 }
 
-/* 3. Contenedor de Módulos */
+/* 3. Área de Contenido Principal */
 .admin-main-content {
   flex: 1;
   width: 100%;
@@ -233,18 +249,18 @@ body {
 }
 
 .pane-header h2 {
-  font-size: 1.25rem;
-  font-weight: 700;
+  font-size: 1.35rem;
+  font-weight: 800;
   color: var(--text);
   margin-bottom: 4px;
 }
 
 .text-muted {
-  font-size: 0.8rem;
+  font-size: 0.82rem;
   color: var(--text-muted);
 }
 
-/* 4. Estructura de Dos Columnas (Desktop) */
+/* 4. Estructura de Dos Columnas */
 .admin-two-cols {
   display: flex;
   flex-direction: column;
@@ -254,10 +270,10 @@ body {
 
 .admin-card {
   background: var(--card-bg);
-  padding: 18px;
-  border-radius: 6px;
+  padding: 20px;
+  border-radius: 8px;
   border: 1px solid var(--border);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
   width: 100%;
   min-width: 0;
 }
@@ -266,9 +282,9 @@ body {
   font-size: 0.95rem;
   font-weight: 700;
   color: var(--text);
-  margin-bottom: 14px;
+  margin-bottom: 16px;
   text-transform: uppercase;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.4px;
 }
 
 /* KPIs de Resumen */
@@ -276,13 +292,13 @@ body {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 12px;
-  margin-bottom: 18px;
+  margin-bottom: 20px;
 }
 
 .kpi-card {
   background: var(--card-bg);
-  padding: 14px 16px;
-  border-radius: 6px;
+  padding: 16px;
+  border-radius: 8px;
   border: 1px solid var(--border);
 }
 
@@ -292,12 +308,12 @@ body {
   font-weight: 600;
   color: var(--text-muted);
   text-transform: uppercase;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.4px;
 }
 
 .kpi-number {
-  font-size: 1.4rem;
-  font-weight: 700;
+  font-size: 1.5rem;
+  font-weight: 800;
   display: block;
   margin-top: 6px;
   color: var(--primary);
@@ -307,59 +323,67 @@ body {
   color: var(--accent);
 }
 
-/* Banner de Acciones */
+/* Banner de Acciones Rápidas con Botones Estilizados */
 .quick-banner {
   background: var(--card-bg);
   border: 1px solid var(--border);
-  padding: 18px;
-  border-radius: 6px;
+  padding: 20px;
+  border-radius: 8px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
 }
 
 .quick-banner h3 {
-  font-size: 0.95rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
   margin-bottom: 4px;
 }
 
 .quick-banner p {
-  font-size: 0.8rem;
+  font-size: 0.83rem;
   color: var(--text-muted);
 }
 
 .quick-actions {
   display: flex;
   gap: 10px;
+  flex-wrap: wrap;
 }
 
-.btn-primary, .btn-outline {
-  padding: 8px 14px;
+/* Estilos explícitos para botones de acción rápida */
+.quick-actions .btn-action-primary {
+  padding: 9px 18px;
+  background: var(--primary);
+  color: #ffffff;
+  border: 1px solid var(--primary);
   border-radius: 4px;
-  font-size: 0.8rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.quick-actions .btn-action-primary:hover {
+  background: #27272a;
+}
+
+.quick-actions .btn-action-outline {
+  padding: 9px 18px;
+  background: #ffffff;
+  color: var(--primary);
+  border: 1px solid #d4d4d8;
+  border-radius: 4px;
+  font-size: 0.82rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.15s ease;
 }
 
-.btn-primary {
-  background: var(--primary);
-  color: #ffffff;
-  border: 1px solid var(--primary);
-}
-
-.btn-primary:hover {
-  background: #1f2937;
-}
-
-.btn-outline {
-  background: transparent;
-  color: var(--primary);
-  border: 1px solid var(--border);
-}
-
-.btn-outline:hover {
-  background: #f1f5f9;
+.quick-actions .btn-action-outline:hover {
+  background: #f4f4f5;
+  border-color: #a1a1aa;
 }
 
 /* Barra de Filtros en Tablas */
@@ -377,27 +401,28 @@ body {
 }
 
 .table-bar-controls select, .table-bar-controls input {
-  padding: 7px 10px;
+  padding: 8px 12px;
   border: 1px solid var(--border);
   border-radius: 4px;
-  font-size: 0.82rem;
+  font-size: 0.83rem;
   background: #ffffff;
   outline: none;
+  color: var(--text);
 }
 
 .table-bar-controls select:focus, .table-bar-controls input:focus {
   border-color: var(--border-focus);
 }
 
-/* Zona de Carga de Fotografías */
+/* Carga de Fotografías */
 .upload-zone {
-  border: 1px dashed #cbd5e1;
-  border-radius: 4px;
-  padding: 16px;
+  border: 1px dashed #d4d4d8;
+  border-radius: 6px;
+  padding: 18px;
   text-align: center;
   cursor: pointer;
-  background: #f8fafc;
-  min-height: 90px;
+  background: #fafafa;
+  min-height: 95px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -412,17 +437,17 @@ body {
 .upload-placeholder {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 4px;
 }
 
 .upload-link {
-  font-size: 0.8rem;
+  font-size: 0.82rem;
   font-weight: 600;
   color: var(--primary);
 }
 
 .upload-hint {
-  font-size: 0.7rem;
+  font-size: 0.72rem;
   color: var(--text-muted);
 }
 
@@ -436,7 +461,7 @@ body {
 
 /* Formularios */
 .form-group {
-  margin-bottom: 11px;
+  margin-bottom: 12px;
   display: flex;
   flex-direction: column;
 }
@@ -448,14 +473,14 @@ body {
 }
 
 .form-group label {
-  font-size: 0.74rem;
+  font-size: 0.75rem;
   font-weight: 600;
   color: var(--text);
   margin-bottom: 4px;
 }
 
 .form-group input, .form-group select {
-  padding: 8px 10px;
+  padding: 9px 11px;
   border: 1px solid var(--border);
   border-radius: 4px;
   font-size: 0.85rem;
@@ -470,12 +495,12 @@ body {
 
 .btn-submit {
   width: 100%;
-  padding: 10px;
+  padding: 11px;
   background: var(--primary);
   color: #ffffff;
   border: none;
   border-radius: 4px;
-  font-size: 0.85rem;
+  font-size: 0.88rem;
   font-weight: 600;
   cursor: pointer;
   margin-top: 6px;
@@ -483,11 +508,11 @@ body {
 }
 
 .btn-submit:hover {
-  background: #1e293b;
+  background: #27272a;
 }
 
 .btn-submit:disabled {
-  background: #94a3b8;
+  background: #a1a1aa;
   cursor: not-allowed;
 }
 
@@ -501,12 +526,12 @@ body {
 .admin-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.8rem;
+  font-size: 0.82rem;
   min-width: 500px;
 }
 
 .admin-table th, .admin-table td {
-  padding: 9px 12px;
+  padding: 10px 12px;
   text-align: left;
   border-bottom: 1px solid var(--border);
 }
@@ -517,20 +542,20 @@ body {
   font-weight: 600;
   font-size: 0.72rem;
   text-transform: uppercase;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.4px;
 }
 
 .thumb-img {
-  width: 38px;
-  height: 38px;
-  border-radius: 3px;
+  width: 40px;
+  height: 40px;
+  border-radius: 4px;
   object-fit: cover;
   border: 1px solid var(--border);
 }
 
 .status-select {
-  padding: 3px 6px;
-  border-radius: 3px;
+  padding: 4px 6px;
+  border-radius: 4px;
   font-size: 0.75rem;
   border: 1px solid var(--border);
   background: #ffffff;
@@ -539,15 +564,15 @@ body {
 .btn-del {
   background: #ffffff;
   border: 1px solid #f87171;
-  color: #dc2626;
-  padding: 3px 8px;
-  border-radius: 3px;
+  color: var(--danger);
+  padding: 4px 8px;
+  border-radius: 4px;
   font-size: 0.72rem;
   cursor: pointer;
 }
 
 .btn-del:hover {
-  background: #fee2e2;
+  background: var(--danger-bg);
 }
 
 .text-center {
@@ -566,22 +591,37 @@ body {
     display: inline;
   }
 
+  /* Navbar ampliado y despejado en escritorio */
+  .admin-topbar {
+    height: 66px;
+    padding: 0 28px;
+  }
+
+  .brand-title h1 {
+    font-size: 1.35rem;
+  }
+
+  .badge-role {
+    font-size: 0.7rem;
+    padding: 4px 8px;
+  }
+
   .admin-sidebar {
     position: sticky;
-    top: 56px;
-    height: calc(100vh - 56px);
+    top: 66px;
+    height: calc(100vh - 66px);
     transform: translateX(0);
     flex-shrink: 0;
   }
 
   .admin-main-content {
-    padding: 24px 30px;
+    padding: 28px 34px;
   }
 
   .admin-two-cols {
     display: grid;
-    grid-template-columns: 360px 1fr;
-    gap: 20px;
+    grid-template-columns: 370px 1fr;
+    gap: 22px;
     align-items: start;
   }
 
@@ -593,7 +633,7 @@ body {
 
   .kpi-grid {
     grid-template-columns: repeat(5, 1fr);
-    gap: 14px;
+    gap: 16px;
   }
 
   .quick-banner {
