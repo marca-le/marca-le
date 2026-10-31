@@ -74,7 +74,6 @@ body {
   border-radius: 1px;
 }
 
-/* Alineación exacta de Marca LE con la insignia */
 .brand-title {
   display: flex;
   align-items: center;
@@ -323,7 +322,7 @@ body {
   color: var(--accent);
 }
 
-/* Banner de Acciones Rápidas con Botones Estilizados */
+/* Banner de Acciones Rápidas */
 .quick-banner {
   background: var(--card-bg);
   border: 1px solid var(--border);
@@ -352,7 +351,6 @@ body {
   flex-wrap: wrap;
 }
 
-/* Estilos explícitos para botones de acción rápida */
 .quick-actions .btn-action-primary {
   padding: 9px 18px;
   background: var(--primary);
@@ -459,17 +457,22 @@ body {
   border: 1px solid var(--border);
 }
 
-/* Formularios */
+/* Formularios y Corrección Antidesborde */
 .form-group {
   margin-bottom: 12px;
   display: flex;
   flex-direction: column;
+  width: 100%;
+  min-width: 0;
 }
 
+/* minmax(0, 1fr) evita que cualquier input empuje el grid hacia afuera */
 .form-row {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 10px;
+  width: 100%;
+  min-width: 0;
 }
 
 .form-group label {
@@ -477,9 +480,16 @@ body {
   font-weight: 600;
   color: var(--text);
   margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.form-group input, .form-group select {
+/* Forzar ancho exacto al contenedor */
+.form-group input, 
+.form-group select {
+  width: 100%;
+  max-width: 100%;
   padding: 9px 11px;
   border: 1px solid var(--border);
   border-radius: 4px;
@@ -591,7 +601,6 @@ body {
     display: inline;
   }
 
-  /* Navbar ampliado y despejado en escritorio */
   .admin-topbar {
     height: 66px;
     padding: 0 28px;
