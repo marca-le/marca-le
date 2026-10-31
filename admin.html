@@ -3,48 +3,52 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Marca LE | Panel Administrativo</title>
+  <title>Marca LE | Panel de Administración</title>
   <link rel="stylesheet" href="css/admin.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
-  <!-- Barra de Encabezado Superior Fija -->
+  <!-- Barra de Encabezado Superior -->
   <header class="admin-topbar">
     <div class="topbar-left">
-      <button class="hamburger-btn" id="btnHamburger" onclick="toggleSidebar()">☰</button>
+      <button class="hamburger-btn" id="btnHamburger" onclick="toggleSidebar()" aria-label="Abrir menú">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </button>
       <div class="brand-title">
-        <h2>MARCA <span>LE</span></h2>
-        <span class="badge-role">Admin Master</span>
+        <h1>MARCA <span>LE</span></h1>
+        <span class="badge-role">Administración</span>
       </div>
     </div>
     <div class="topbar-right">
-      <span class="user-greeting" id="adminGreeting">Hola, Administrador</span>
-      <a href="index.html" class="btn-store-link" target="_blank">↗ Ver Tienda</a>
-      <button class="btn-logout-admin" onclick="cerrarSesionAdmin()">Salir</button>
+      <span class="user-greeting" id="adminGreeting">Usuario</span>
+      <a href="index.html" class="btn-store-link" target="_blank">Ver Tienda</a>
+      <button class="btn-logout-admin" onclick="cerrarSesionAdmin()">Cerrar Sesión</button>
     </div>
   </header>
 
-  <!-- Contenedor Flex Principal (Sidebar + Contenido) -->
+  <!-- Contenedor Principal (Sidebar + Módulos) -->
   <div class="admin-wrapper">
 
-    <!-- Menú Lateral (Sidebar) -->
+    <!-- Menú Lateral -->
     <aside class="admin-sidebar" id="adminSidebar">
       <nav class="sidebar-menu">
-        <button class="menu-item active" onclick="mostrarModulo('dashboard', this)">
-          📊 Dashboard General
+        <button class="menu-item active" data-modulo="dashboard" onclick="mostrarModulo('dashboard', this)">
+          Resumen General
         </button>
-        <button class="menu-item" onclick="mostrarModulo('prendas', this)">
-          👗 Gestión de Prendas
+        <button class="menu-item" data-modulo="prendas" onclick="mostrarModulo('prendas', this)">
+          Prendas e Inventario
         </button>
-        <button class="menu-item" onclick="mostrarModulo('ventas', this)">
-          💰 Ventas Realizadas
+        <button class="menu-item" data-modulo="ventas" onclick="mostrarModulo('ventas', this)">
+          Registro de Ventas
         </button>
-        <button class="menu-item" onclick="mostrarModulo('proveedores', this)">
-          🚚 Proveedores de Pacas
+        <button class="menu-item" data-modulo="proveedores" onclick="mostrarModulo('proveedores', this)">
+          Proveedores
         </button>
-        <button class="menu-item" onclick="mostrarModulo('usuarios', this)">
-          👥 Clientes Registrados
+        <button class="menu-item" data-modulo="usuarios" onclick="mostrarModulo('usuarios', this)">
+          Clientes Registrados
         </button>
       </nav>
     </aside>
@@ -52,45 +56,47 @@
     <!-- Overlay oscuro para cerrar menú en celular -->
     <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 
-    <!-- Área de Contenido Dinámico -->
+    <!-- Contenido Dinámico -->
     <main class="admin-main-content">
 
-      <!-- ================= MODULO 1: DASHBOARD ================= -->
+      <!-- ================= MODULO 1: RESUMEN GENERAL ================= -->
       <section class="module-pane active" id="pane-dashboard">
         <div class="pane-header">
-          <h3>Resumen General de Rendimiento</h3>
-          <p class="text-muted">Métricas cuantitativas del inventario y ventas acumuladas.</p>
+          <h2>Resumen General</h2>
+          <p class="text-muted">Estado actual del inventario de prendas y recaudación por ventas.</p>
         </div>
 
         <div class="kpi-grid">
           <div class="kpi-card">
-            <h4>Total Prendas</h4>
+            <span class="kpi-label">Total en Sistema</span>
             <span class="kpi-number" id="kpiTotal">0</span>
           </div>
           <div class="kpi-card">
-            <h4>Disponibles</h4>
-            <span class="kpi-number text-success" id="kpiDisponibles">0</span>
+            <span class="kpi-label">Prendas Disponibles</span>
+            <span class="kpi-number" id="kpiDisponibles">0</span>
           </div>
           <div class="kpi-card">
-            <h4>Reservadas</h4>
-            <span class="kpi-number text-warning" id="kpiReservadas">0</span>
+            <span class="kpi-label">Prendas Reservadas</span>
+            <span class="kpi-number" id="kpiReservadas">0</span>
           </div>
           <div class="kpi-card">
-            <h4>Vendidas</h4>
-            <span class="kpi-number text-danger" id="kpiVendidas">0</span>
+            <span class="kpi-label">Prendas Vendidas</span>
+            <span class="kpi-number" id="kpiVendidas">0</span>
           </div>
           <div class="kpi-card highlight">
-            <h4>Ventas Acumuladas</h4>
+            <span class="kpi-label">Total Ventas (Bs.)</span>
             <span class="kpi-number text-accent" id="kpiTotalVentasBs">0.00 Bs.</span>
           </div>
         </div>
 
         <div class="quick-banner">
-          <h4>¿Nueva mercadería recibida?</h4>
-          <p>Podés dar de alta prendas con foto desde el celular o registrar ventas cerradas en la feria.</p>
+          <div>
+            <h3>Acciones Rápidas</h3>
+            <p>Registra nuevas prendas recibidas en lote o asienta las ventas cerradas en la feria.</p>
+          </div>
           <div class="quick-actions">
-            <button class="btn-quick" onclick="mostrarModulo('prendas')">+ Añadir Prenda</button>
-            <button class="btn-quick-outline" onclick="mostrarModulo('ventas')">+ Registrar Venta</button>
+            <button class="btn-primary" onclick="mostrarModulo('prendas')">Nueva Prenda</button>
+            <button class="btn-outline" onclick="mostrarModulo('ventas')">Registrar Venta</button>
           </div>
         </div>
       </section>
@@ -98,38 +104,35 @@
       <!-- ================= MODULO 2: PRENDAS ================= -->
       <section class="module-pane" id="pane-prendas">
         <div class="pane-header">
-          <h3>Catálogo e Inventario de Prendas</h3>
-          <p class="text-muted">Publicá nuevas piezas de ropa americana y gestioná sus estados.</p>
+          <h2>Prendas e Inventario</h2>
+          <p class="text-muted">Registro de nuevas piezas de ropa americana y control de disponibilidad.</p>
         </div>
 
         <div class="admin-two-cols">
-          <!-- Columna Izquierda: Formulario -->
+          <!-- Formulario Registro -->
           <div class="admin-card form-box">
-            <h4>➕ Registrar Prenda</h4>
+            <h3>Registrar Prenda</h3>
             <form id="formPrenda">
               <div class="form-group">
-                <label>Foto de la Prenda *</label>
+                <label>Fotografía de la Prenda *</label>
                 <div class="upload-zone" id="uploadZone" onclick="document.getElementById('foto').click()">
                   <input type="file" id="foto" accept="image/*" required style="display: none;">
                   <div class="upload-placeholder" id="uploadPlaceholder">
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#c9933b" stroke-width="2">
-                      <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
-                      <circle cx="12" cy="13" r="4"></circle>
-                    </svg>
-                    <span>Subir fotografía</span>
+                    <span class="upload-link">Seleccionar imagen desde el dispositivo</span>
+                    <span class="upload-hint">Formatos JPG, PNG o WEBP</span>
                   </div>
-                  <img id="imgPreview" class="preview-img" style="display: none;" alt="Preview">
+                  <img id="imgPreview" class="preview-img" style="display: none;" alt="Vista previa">
                 </div>
               </div>
 
               <div class="form-group">
-                <label>Nombre / Modelo *</label>
-                <input type="text" id="nombre" placeholder="Ej: Chamarra Cuero Vintage" required>
+                <label>Descripción / Nombre *</label>
+                <input type="text" id="nombre" placeholder="Ej: Chamarra Rompevientos Retro" required>
               </div>
 
               <div class="form-row">
                 <div class="form-group">
-                  <label>Nivel de Mano *</label>
+                  <label>Selección *</label>
                   <select id="categoriaMano" required>
                     <option value="primera">1ra Mano</option>
                     <option value="segunda" selected>2da Mano</option>
@@ -137,7 +140,7 @@
                   </select>
                 </div>
                 <div class="form-group">
-                  <label>Tipo *</label>
+                  <label>Tipo de Prenda *</label>
                   <select id="tipoPrenda" required>
                     <option value="Chamarra">Chamarra</option>
                     <option value="Polera">Polera</option>
@@ -170,26 +173,26 @@
               </div>
 
               <div class="form-group">
-                <label>Precio (Bs.) *</label>
+                <label>Precio Unitario (Bs.) *</label>
                 <input type="number" id="precio" step="0.5" placeholder="Ej: 60" required>
               </div>
 
-              <button type="submit" class="btn-submit" id="btnGuardarPrenda">Publicar Prenda</button>
+              <button type="submit" class="btn-submit" id="btnGuardarPrenda">Guardar y Publicar</button>
             </form>
           </div>
 
-          <!-- Columna Derecha: Tabla de Inventario -->
+          <!-- Tabla Inventario -->
           <div class="admin-card table-box">
             <div class="card-table-bar">
-              <h4>📦 Stock Registrado</h4>
+              <h3>Inventario Registrado</h3>
               <div class="table-bar-controls">
                 <select id="filterEstadoAdmin">
                   <option value="disponible" selected>En Percha (Disponibles)</option>
-                  <option value="todos">Ver Todo el Historial</option>
+                  <option value="todos">Ver Todas</option>
                   <option value="reservado">Reservadas</option>
                   <option value="vendido">Vendidas</option>
                 </select>
-                <input type="text" id="searchPrendas" placeholder="Buscar prenda...">
+                <input type="text" id="searchPrendas" placeholder="Buscar por código o nombre...">
               </div>
             </div>
             <div class="table-responsive">
@@ -198,14 +201,14 @@
                   <tr>
                     <th>Foto</th>
                     <th>Código</th>
-                    <th>Prenda</th>
+                    <th>Detalle</th>
                     <th>Precio</th>
                     <th>Estado</th>
                     <th>Acción</th>
                   </tr>
                 </thead>
                 <tbody id="tablaPrendasBody">
-                  <tr><td colspan="6" class="text-center">Cargando...</td></tr>
+                  <tr><td colspan="6" class="text-center">Cargando datos...</td></tr>
                 </tbody>
               </table>
             </div>
@@ -216,21 +219,21 @@
       <!-- ================= MODULO 3: VENTAS ================= -->
       <section class="module-pane" id="pane-ventas">
         <div class="pane-header">
-          <h3>Registro de Ventas Concretadas</h3>
-          <p class="text-muted">Anotá las ventas cerradas por WhatsApp o presencialmente en la feria.</p>
+          <h2>Registro de Ventas</h2>
+          <p class="text-muted">Asiento de prendas entregadas mediante WhatsApp o presencialmente en la feria.</p>
         </div>
 
         <div class="admin-two-cols">
           <!-- Formulario Venta -->
           <div class="admin-card form-box">
-            <h4>💵 Registrar Nueva Venta</h4>
+            <h3>Registrar Venta</h3>
             <form id="formVenta">
               <div class="form-group">
-                <label>Nombre del Cliente *</label>
-                <input type="text" id="ventasCliente" placeholder="Ej: Juan López" required>
+                <label>Nombre del Comprador *</label>
+                <input type="text" id="ventasCliente" placeholder="Ej: Juan Pérez" required>
               </div>
               <div class="form-group">
-                <label>Prenda Vendida *</label>
+                <label>Prenda a Descontar *</label>
                 <select id="ventasPrendaSelect" required>
                   <option value="">Seleccione una prenda disponible...</option>
                 </select>
@@ -254,12 +257,12 @@
 
           <!-- Historial de Ventas -->
           <div class="admin-card table-box">
-            <h4>📋 Historial de Ventas Concretadas</h4>
+            <h3>Historial de Ventas</h3>
             <div class="table-responsive">
               <table class="admin-table">
                 <thead>
                   <tr>
-                    <th>Cód. Venta</th>
+                    <th>Comprobante</th>
                     <th>Cliente</th>
                     <th>Prenda</th>
                     <th>Total</th>
@@ -278,31 +281,31 @@
       <!-- ================= MODULO 4: PROVEEDORES ================= -->
       <section class="module-pane" id="pane-proveedores">
         <div class="pane-header">
-          <h3>Directorio de Proveedores y Fardos</h3>
-          <p class="text-muted">Registrá mayoristas de pacas y contactos comerciales.</p>
+          <h2>Proveedores de Lotes</h2>
+          <p class="text-muted">Directorio de importadores y distribuidores de fardos de ropa americana.</p>
         </div>
 
         <div class="admin-two-cols">
           <!-- Formulario Proveedor -->
           <div class="admin-card form-box">
-            <h4>➕ Registrar Proveedor</h4>
+            <h3>Nuevo Proveedor</h3>
             <form id="formProveedor">
               <div class="form-group">
                 <label>Razón Social / Nombre *</label>
                 <input type="text" id="provNombre" placeholder="Ej: Importadora Fardos Iquique" required>
               </div>
               <div class="form-group">
-                <label>Teléfono / WhatsApp *</label>
+                <label>Teléfono de Contacto *</label>
                 <input type="text" id="provTelefono" placeholder="Ej: +591 75589123" required>
               </div>
               <div class="form-row">
                 <div class="form-group">
-                  <label>Ciudad / Origen</label>
+                  <label>Ciudad de Origen</label>
                   <input type="text" id="provCiudad" placeholder="Ej: Santa Cruz / Iquique">
                 </div>
                 <div class="form-group">
-                  <label>Tipo de Ropa / Pacas</label>
-                  <input type="text" id="provTipo" placeholder="Ej: Poleras deportivas, Jeans">
+                  <label>Categoría de Mercadería</label>
+                  <input type="text" id="provTipo" placeholder="Ej: Pacas de Chamarra, Jeans">
                 </div>
               </div>
               <button type="submit" class="btn-submit">Guardar Proveedor</button>
@@ -311,13 +314,13 @@
 
           <!-- Lista Proveedores -->
           <div class="admin-card table-box">
-            <h4>🏢 Proveedores Guardados</h4>
+            <h3>Proveedores Registrados</h3>
             <div class="table-responsive">
               <table class="admin-table">
                 <thead>
                   <tr>
                     <th>Distribuidor</th>
-                    <th>Contacto</th>
+                    <th>Teléfono</th>
                     <th>Origen</th>
                     <th>Especialidad</th>
                   </tr>
@@ -331,24 +334,24 @@
         </div>
       </section>
 
-      <!-- ================= MODULO 5: USUARIOS ================= -->
+      <!-- ================= MODULO 5: CLIENTES ================= -->
       <section class="module-pane" id="pane-usuarios">
         <div class="pane-header">
-          <h3>Clientes Registrados en la Plataforma</h3>
-          <p class="text-muted">Usuarios que crearon su cuenta desde el sitio web.</p>
+          <h2>Clientes Registrados</h2>
+          <p class="text-muted">Directorio de usuarios registrados desde el sitio web.</p>
         </div>
 
         <div class="admin-card">
-          <h4>👥 Directorio de Cuentas</h4>
+          <h3>Lista de Usuarios</h3>
           <div class="table-responsive">
             <table class="admin-table">
               <thead>
                 <tr>
                   <th>Nombre Completo</th>
                   <th>Correo Electrónico</th>
-                  <th>Celular</th>
+                  <th>Teléfono</th>
                   <th>Rol</th>
-                  <th>Fecha Registro</th>
+                  <th>Fecha de Registro</th>
                 </tr>
               </thead>
               <tbody id="tablaUsuariosBody">

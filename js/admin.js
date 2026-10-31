@@ -1,69 +1,68 @@
-// Variables globales de datos
 let prendasAdmin = [];
 let ventasAdmin = [];
 let proveedoresAdmin = [];
 let usuariosAdmin = [];
 
 document.addEventListener("DOMContentLoaded", () => {
-  // 1. Guardia de Seguridad: Validar que el usuario autenticado sea ADMINISTRADOR
+  // 1. Guardia de Seguridad
   verificarPermisosAdmin();
 
-  // 2. Cargar la información de todos los módulos
+  // 2. Carga inicial de datos
   cargarModuloPrendas();
   cargarModuloVentas();
   cargarModuloProveedores();
   cargarModuloUsuarios();
 
-  // 3. Event Listeners de formularios
+  // 3. Event Listeners
   document.getElementById("formPrenda").addEventListener("submit", registrarPrenda);
   document.getElementById("formVenta").addEventListener("submit", registrarVenta);
   document.getElementById("formProveedor").addEventListener("submit", registrarProveedor);
 
-  // 4. Filtros reactivos en la tabla de prendas
+  // 4. Búsqueda y filtros
   document.getElementById("searchPrendas").addEventListener("input", filtrarTablaPrendas);
   const filterEstado = document.getElementById("filterEstadoAdmin");
   if (filterEstado) {
     filterEstado.addEventListener("change", filtrarTablaPrendas);
   }
 
-  // 5. Previsualización interactiva de la fotografía
+  // 5. Previsualización de imagen
   document.getElementById("foto").addEventListener("change", previewFoto);
 });
 
 /* ========================================================
-   GUARDIA DE SEGURIDAD Y SESIÓN
+   SEGURIDAD Y CONTROL DE SESIÓN
 ======================================================== */
 function verificarPermisosAdmin() {
   const sesionStr = localStorage.getItem("sesion_usuario_marcale");
 
   if (!sesionStr) {
-    alert("Acceso denegado: Debes iniciar sesión con tu cuenta de administrador.");
+    alert("Acceso denegado: Inicie sesión como administrador.");
     window.location.href = "index.html";
     return;
   }
 
   const usuario = JSON.parse(sesionStr);
   if (usuario.rol !== "admin") {
-    alert(`Acceso denegado: La cuenta ${usuario.email} no cuenta con permisos administrativos.`);
+    alert("Acceso restringido únicamente a administradores.");
     window.location.href = "index.html";
     return;
   }
 
   const greetingElem = document.getElementById("adminGreeting");
   if (greetingElem) {
-    greetingElem.innerText = `Hola, ${usuario.nombre_completo}`;
+    greetingElem.innerText = usuario.nombre_completo || usuario.email;
   }
 }
 
 function cerrarSesionAdmin() {
-  if (confirm("¿Deseas cerrar tu sesión de administrador?")) {
+  if (confirm("¿Desea cerrar la sesión administrativa?")) {
     localStorage.removeItem("sesion_usuario_marcale");
     window.location.href = "index.html";
   }
 }
 
 /* ========================================================
-   NAVEGACIÓN RESPONSIVA Y MODULAR (SPA)
+   NAVEGACIÓN MODULAR (SPA)
 ======================================================== */
 function toggleSidebar() {
   const sidebar = document.getElementById("adminSidebar");
@@ -73,23 +72,19 @@ function toggleSidebar() {
 }
 
 function mostrarModulo(idModulo, botonMenu = null) {
-  // Ocultar todos los paneles de módulos
   document.querySelectorAll(".module-pane").forEach(pane => pane.classList.remove("active"));
 
-  // Activar el panel seleccionado
   const panel = document.getElementById(`pane-${idModulo}`);
   if (panel) panel.classList.add("active");
 
-  // Actualizar estado activo en los botones del sidebar
   document.querySelectorAll(".menu-item").forEach(item => item.classList.remove("active"));
   if (botonMenu) {
     botonMenu.classList.add("active");
   } else {
-    const btn = Array.from(document.querySelectorAll(".menu-item")).find(b => b.innerText.toLowerCase().includes(idModulo));
+    const btn = document.querySelector(`.menu-item[data-modulo="${idModulo}"]`);
     if (btn) btn.classList.add("active");
   }
 
-  // Cerrar el sidebar y el overlay en pantallas móviles
   const sidebar = document.getElementById("adminSidebar");
   const overlay = document.getElementById("sidebarOverlay");
   if (sidebar) sidebar.classList.remove("show");
@@ -97,7 +92,7 @@ function mostrarModulo(idModulo, botonMenu = null) {
 }
 
 /* ========================================================
-   MÓDULO 1 Y 2: GESTIÓN DE PRENDAS E INVENTARIO
+   MÓDULO: PRENDAS E INVENTARIO
 ======================================================== */
 async function cargarModuloPrendas() {
   const tbody = document.getElementById("tablaPrendasBody");
@@ -114,7 +109,7 @@ async function cargarModuloPrendas() {
     filtrarTablaPrendas();
     actualizarSelectPrendasParaVenta(prendasAdmin);
   } catch (err) {
-    tbody.innerHTML = `<tr><td colspan="6" class="text-center" style="color:red;">Error: ${err.message}</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="6" class="text-center" style="color:red;">Error al cargar prendas: ${err.message}</td></tr>`;
   }
 }
 
@@ -130,7 +125,7 @@ function renderizarTablaPrendas(lista) {
   lista.forEach(item => {
     const tr = document.createElement("tr");
     tr.innerHTML = `
-      <td><img src="${item.imagen_url}" class="thumb-img" alt="${item.nombre}" onerror="this.src='https://via.placeholder.com/40'"></td>
+      <td><img src="${item.imagen_url}" class="thumb-img" alt="${item.nombre}" onerror="this.src='https://via.placeholder.com/38'"></td>
       <td><strong>${item.codigo_prenda}</strong></td>
       <td>
         <div style="font-weight: 600;">${item.nombre}</div>
@@ -174,11 +169,11 @@ async function registrarPrenda(e) {
   e.preventDefault();
   const btn = document.getElementById("btnGuardarPrenda");
   btn.disabled = true;
-  btn.innerText = "Subiendo foto...";
+  btn.innerText = "Guardando...";
 
   try {
     const file = document.getElementById("foto").files[0];
-    if (!file) throw new Error("Selecciona una fotografía para la prenda.");
+    if (!file) throw new Error("Debe seleccionar una fotografía para la prenda.");
 
     const codigoGenerado = "LE-" + Math.floor(100 + Math.random() * 900);
     const fileExt = file.name.split('.').pop();
@@ -212,7 +207,7 @@ async function registrarPrenda(e) {
 
     if (insertError) throw insertError;
 
-    alert(`¡Prenda registrada con éxito con código ${codigoGenerado}!`);
+    alert(`Prenda registrada con éxito (Código: ${codigoGenerado})`);
     document.getElementById("formPrenda").reset();
     document.getElementById("imgPreview").style.display = "none";
     document.getElementById("uploadPlaceholder").style.display = "flex";
@@ -221,7 +216,7 @@ async function registrarPrenda(e) {
     alert(err.message);
   } finally {
     btn.disabled = false;
-    btn.innerText = "Publicar Prenda";
+    btn.innerText = "Guardar y Publicar";
   }
 }
 
@@ -243,7 +238,7 @@ async function cambiarEstadoPrenda(id, estado) {
 }
 
 async function eliminarPrenda(id, codigo) {
-  if (!confirm(`¿Deseas eliminar la prenda con código ${codigo}?`)) return;
+  if (!confirm(`¿Eliminar la prenda ${codigo}?`)) return;
   try {
     const { error } = await supabaseClient.from("prendas").delete().eq("id", id);
     if (error) throw error;
@@ -274,7 +269,7 @@ function previewFoto() {
 }
 
 /* ========================================================
-   MÓDULO 3: REGISTRO DE VENTAS REALIZADAS
+   MÓDULO: VENTAS
 ======================================================== */
 async function cargarModuloVentas() {
   const tbody = document.getElementById("tablaVentasBody");
@@ -298,7 +293,7 @@ function renderizarTablaVentas(lista) {
   tbody.innerHTML = "";
 
   if (lista.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="5" class="text-center">No hay ventas registradas todavía.</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="5" class="text-center">No existen ventas registradas.</td></tr>`;
     return;
   }
 
@@ -343,7 +338,7 @@ async function registrarVenta(e) {
   const select = document.getElementById("ventasPrendaSelect");
   const opt = select.options[select.selectedIndex];
   if (!opt || !opt.value) {
-    alert("Por favor selecciona una prenda disponible.");
+    alert("Seleccione una prenda disponible.");
     return;
   }
 
@@ -360,7 +355,6 @@ async function registrarVenta(e) {
 
     const codigoVenta = "VTA-" + Math.floor(1000 + Math.random() * 9000);
 
-    // 1. Insertar la venta en la tabla 'ventas'
     const { error: errorVenta } = await supabaseClient.from("ventas").insert([{
       codigo_venta: codigoVenta,
       cliente_nombre: cliente,
@@ -373,10 +367,9 @@ async function registrarVenta(e) {
 
     if (errorVenta) throw errorVenta;
 
-    // 2. Actualizar el estado de la prenda a "vendido"
     await supabaseClient.from("prendas").update({ estado: "vendido" }).eq("id", prendaId);
 
-    alert(`¡Venta ${codigoVenta} confirmada! La prenda se marcó como VENDIDA y salió del stock en percha.`);
+    alert(`Venta ${codigoVenta} confirmada. La prenda fue marcada como vendida.`);
     document.getElementById("formVenta").reset();
     cargarModuloVentas();
     cargarModuloPrendas();
@@ -388,16 +381,12 @@ async function registrarVenta(e) {
 }
 
 /* ========================================================
-   MÓDULO 4: PROVEEDORES DE PACAS
+   MÓDULO: PROVEEDORES
 ======================================================== */
 async function cargarModuloProveedores() {
   const tbody = document.getElementById("tablaProveedoresBody");
   try {
-    const { data, error } = await supabaseClient
-      .from("proveedores")
-      .select("*")
-      .order("created_at", { ascending: false });
-
+    const { data, error } = await supabaseClient.from("proveedores").select("*").order("created_at", { ascending: false });
     if (error) throw error;
     proveedoresAdmin = data || [];
     renderizarTablaProveedores(proveedoresAdmin);
@@ -409,12 +398,10 @@ async function cargarModuloProveedores() {
 function renderizarTablaProveedores(lista) {
   const tbody = document.getElementById("tablaProveedoresBody");
   tbody.innerHTML = "";
-
   if (lista.length === 0) {
     tbody.innerHTML = `<tr><td colspan="4" class="text-center">No hay proveedores registrados.</td></tr>`;
     return;
   }
-
   lista.forEach(prov => {
     const tr = document.createElement("tr");
     tr.innerHTML = `
@@ -440,7 +427,7 @@ async function registrarProveedor(e) {
     const { error } = await supabaseClient.from("proveedores").insert([nuevo]);
     if (error) throw error;
 
-    alert("¡Proveedor guardado con éxito!");
+    alert("Proveedor registrado satisfactoriamente.");
     document.getElementById("formProveedor").reset();
     cargarModuloProveedores();
   } catch (err) {
@@ -449,16 +436,12 @@ async function registrarProveedor(e) {
 }
 
 /* ========================================================
-   MÓDULO 5: CLIENTES / USUARIOS REGISTRADOS
+   MÓDULO: CLIENTES / USUARIOS
 ======================================================== */
 async function cargarModuloUsuarios() {
   const tbody = document.getElementById("tablaUsuariosBody");
   try {
-    const { data, error } = await supabaseClient
-      .from("usuarios")
-      .select("*")
-      .order("created_at", { ascending: false });
-
+    const { data, error } = await supabaseClient.from("usuarios").select("*").order("created_at", { ascending: false });
     if (error) throw error;
     usuariosAdmin = data || [];
     renderizarTablaUsuarios(usuariosAdmin);
@@ -470,19 +453,17 @@ async function cargarModuloUsuarios() {
 function renderizarTablaUsuarios(lista) {
   const tbody = document.getElementById("tablaUsuariosBody");
   tbody.innerHTML = "";
-
   if (lista.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="5" class="text-center">No hay usuarios registrados.</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="5" class="text-center">No existen usuarios registrados.</td></tr>`;
     return;
   }
-
   lista.forEach(u => {
     const tr = document.createElement("tr");
     tr.innerHTML = `
       <td><strong>${u.nombre_completo}</strong></td>
       <td>${u.email}</td>
       <td>${u.telefono_ws || '-'}</td>
-      <td><span style="text-transform:uppercase; font-size:0.75rem; font-weight:bold;">${u.rol}</span></td>
+      <td><span style="text-transform:uppercase; font-size:0.72rem; font-weight:600;">${u.rol}</span></td>
       <td><small>${new Date(u.created_at).toLocaleDateString()}</small></td>
     `;
     tbody.appendChild(tr);
@@ -490,7 +471,7 @@ function renderizarTablaUsuarios(lista) {
 }
 
 /* ========================================================
-   KPIS GENERALES DEL DASHBOARD
+   KPIS DE RESUMEN
 ======================================================== */
 function actualizarKPIs() {
   document.getElementById("kpiTotal").innerText = prendasAdmin.length;
