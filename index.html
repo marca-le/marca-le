@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Marca LE | Ropa Americana Seleccionada en Satélite Norte</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+  <!-- Barra Superior -->
+  <header class="main-header">
+    <div class="top-bar">
+      <span>📍 Feria de Satélite Norte (Sábados y Domingos) | Envíos locales por QR</span>
+    </div>
+    <nav class="navbar">
+      <div class="logo">
+        <h1>MARCA <span>LE</span></h1>
+        <p>Ropa Americana Seleccionada</p>
+      </div>
+
+      <!-- Área Dinámica de Usuario en Navbar -->
+      <div class="nav-user-actions" id="navUserActions">
+        <button class="btn-login-open" onclick="abrirModalAuth('login')">Ingresar</button>
+        <button class="btn-register-open" onclick="abrirModalAuth('register')">Registrarse</button>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Banner Hero -->
+  <section class="hero-banner">
+    <div class="hero-content">
+      <h2>Moda Americana Sostenible y Exclusiva</h2>
+      <p>Prendas únicas clasificadas por nivel de selección. Encontrá ropa americana premium, elegí tu pieza y reservala al instante.</p>
+      <a href="#catalogo" class="btn-cta">Explorar Catálogo</a>
+    </div>
+  </section>
+
+  <!-- Catálogo -->
+  <main class="catalog-section" id="catalogo">
+    <div class="section-title">
+      <h3>Catálogo de Prendas Disponibles</h3>
+      <p>Filtrá según la categoría de selección o tipo de prenda</p>
+    </div>
+
+    <!-- Barra de Filtros -->
+    <div class="filter-bar">
+      <div class="filter-group">
+        <label>Nivel de Selección:</label>
+        <select id="filterMano">
+          <option value="todos">Todas las categorías</option>
+          <option value="primera">1ra Mano (Nueva / Impecable)</option>
+          <option value="segunda">2da Mano (Seleccionada)</option>
+          <option value="tercera">3ra Mano (Paca / Económica)</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label>Tipo de Prenda:</label>
+        <select id="filterTipo">
+          <option value="todos">Todos los tipos</option>
+          <option value="Chamarra">Chamarras</option>
+          <option value="Polera">Poleras</option>
+          <option value="Pantalón">Pantalones / Jeans</option>
+          <option value="Short">Shorts</option>
+          <option value="Camisa">Camisas</option>
+          <option value="Formal">Formal</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label>Buscar prenda o marca:</label>
+        <input type="text" id="inputSearch" placeholder="Ej: Nike, Levi's, Chamarra...">
+      </div>
+    </div>
+
+    <!-- Grilla de Productos -->
+    <div class="products-grid" id="productsGrid">
+      <p class="loading-text">Cargando catálogo en tiempo real...</p>
+    </div>
+  </main>
+
+  <!-- Modal de Autenticación (Login / Registro) -->
+  <div class="modal-auth" id="modalAuth">
+    <div class="modal-auth-content">
+      <button class="btn-modal-close" onclick="cerrarModalAuth()">&times;</button>
+      
+      <!-- Pestañas de Cambio Rápido -->
+      <div class="auth-tabs">
+        <button class="tab-btn active" id="tabLogin" onclick="switchAuthTab('login')">Iniciar Sesión</button>
+        <button class="tab-btn" id="tabRegister" onclick="switchAuthTab('register')">Crear Cuenta</button>
+      </div>
+
+      <!-- Formulario Login -->
+      <form id="formLogin" class="auth-form">
+        <h4>Bienvenido de nuevo</h4>
+        <p class="form-subtext">Ingresá con tu correo electrónico y contraseña.</p>
+        
+        <div class="form-group">
+          <label>Correo Electrónico</label>
+          <input type="email" id="loginEmail" placeholder="tunombre@gmail.com" required>
+        </div>
+        <div class="form-group">
+          <label>Contraseña</label>
+          <input type="password" id="loginPassword" placeholder="••••••••" required>
+        </div>
+        <button type="submit" class="btn-auth-submit" id="btnLoginSubmit">Acceder</button>
+      </form>
+
+      <!-- Formulario Registro -->
+      <form id="formRegister" class="auth-form" style="display: none;">
+        <h4>Crear Cuenta de Cliente</h4>
+        <p class="form-subtext">Registrate para guardar tus consultas y agilizar tus pedidos.</p>
+        
+        <div class="form-group">
+          <label>Nombre Completo</label>
+          <input type="text" id="regNombre" placeholder="Ej: María Flores" required>
+        </div>
+        <div class="form-group">
+          <label>Correo Electrónico</label>
+          <input type="email" id="regEmail" placeholder="tunombre@gmail.com" required>
+        </div>
+        <div class="form-group">
+          <label>Celular (WhatsApp)</label>
+          <input type="text" id="regTelefono" placeholder="+591 70000000" required>
+        </div>
+        <div class="form-group">
+          <label>Contraseña (mínimo 6 caracteres)</label>
+          <input type="password" id="regPassword" placeholder="••••••••" required minlength="6">
+        </div>
+        <button type="submit" class="btn-auth-submit" id="btnRegisterSubmit">Registrarme</button>
+      </form>
+    </div>
+  </div>
+
+  <footer class="main-footer">
+    <p>&copy; 2026 Marca LE - Satélite Norte, Warnes, Bolivia.</p>
+    <p>Proyecto de Grado - Bachillerato Técnico Humanístico (BTH) en Sistemas Informáticos.</p>
+  </footer>
+
+  <script src="js/config.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
