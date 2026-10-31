@@ -24,20 +24,23 @@ body {
   background-color: var(--bg-main);
   color: var(--text);
   overflow-x: hidden;
+  width: 100%;
 }
 
-/* Barra Superior */
+/* 1. Header Topbar Fijo */
 .admin-topbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 16px;
+  padding: 0 18px;
+  height: 58px;
   background: var(--primary);
   color: #fff;
   border-bottom: 2px solid var(--accent);
   position: sticky;
   top: 0;
   z-index: 100;
+  width: 100%;
 }
 
 .topbar-left {
@@ -82,14 +85,10 @@ body {
   display: none;
 }
 
-@media (min-width: 600px) {
-  .user-greeting { display: inline; }
-}
-
 .btn-store-link {
   color: #fff;
   background: var(--accent);
-  padding: 5px 10px;
+  padding: 5px 12px;
   border-radius: 4px;
   text-decoration: none;
   font-size: 0.75rem;
@@ -106,43 +105,55 @@ body {
   cursor: pointer;
 }
 
-/* Estructura Layout (Sidebar + Main) */
+/* 2. Wrapper Principal (Sidebar + Main Content en Flex) */
 .admin-wrapper {
   display: flex;
-  min-height: calc(100vh - 56px);
+  width: 100%;
+  min-height: calc(100vh - 58px);
   position: relative;
+  align-items: flex-start;
 }
 
+/* Sidebar en Móvil */
 .admin-sidebar {
-  width: 240px;
+  width: 250px;
   background: var(--sidebar-bg);
   padding: 16px 0;
   display: flex;
   flex-direction: column;
-  transition: transform 0.3s ease;
   position: fixed;
-  top: 56px;
+  top: 58px;
   bottom: 0;
   left: 0;
-  z-index: 90;
+  z-index: 999;
   transform: translateX(-100%);
+  transition: transform 0.3s ease;
+  overflow-y: auto;
 }
 
 .admin-sidebar.show {
   transform: translateX(0);
 }
 
-@media (min-width: 992px) {
-  .admin-sidebar {
-    position: static;
-    transform: translateX(0);
-  }
-  .hamburger-btn { display: none; }
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  top: 58px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 998;
+}
+
+.sidebar-overlay.show {
+  display: block;
 }
 
 .sidebar-menu {
   display: flex;
   flex-direction: column;
+  width: 100%;
 }
 
 .menu-item {
@@ -150,13 +161,14 @@ body {
   border: none;
   color: #d1d5db;
   text-align: left;
-  padding: 12px 18px;
+  padding: 13px 20px;
   font-size: 0.9rem;
   cursor: pointer;
   transition: all 0.2s;
   display: flex;
   align-items: center;
   gap: 10px;
+  width: 100%;
 }
 
 .menu-item:hover, .menu-item.active {
@@ -165,17 +177,17 @@ body {
   border-left: 4px solid var(--accent);
 }
 
-/* Área de Contenido Principal */
+/* 3. Área de Contenido Principal */
 .admin-main-content {
   flex: 1;
-  padding: 16px;
-  max-width: 1300px;
-  margin: 0 auto;
   width: 100%;
+  min-width: 0;
+  padding: 16px;
 }
 
 .module-pane {
   display: none;
+  width: 100%;
 }
 
 .module-pane.active {
@@ -183,16 +195,39 @@ body {
 }
 
 .pane-header {
-  margin-bottom: 16px;
+  margin-bottom: 18px;
 }
 
 .pane-header h3 {
-  font-size: 1.25rem;
+  font-size: 1.3rem;
+  margin-bottom: 2px;
 }
 
 .text-muted {
-  font-size: 0.8rem;
+  font-size: 0.82rem;
   color: var(--text-muted);
+}
+
+/* 4. Estructura de 2 Columnas para Desktop */
+.admin-two-cols {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  width: 100%;
+}
+
+.admin-card {
+  background: var(--card-bg);
+  padding: 18px;
+  border-radius: 10px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  width: 100%;
+  min-width: 0; /* Clave para que la tabla no rompa el grid */
+}
+
+.admin-card h4 {
+  font-size: 1.05rem;
+  margin-bottom: 14px;
 }
 
 /* KPIs */
@@ -201,12 +236,6 @@ body {
   grid-template-columns: repeat(2, 1fr);
   gap: 10px;
   margin-bottom: 18px;
-}
-
-@media (min-width: 768px) {
-  .kpi-grid {
-    grid-template-columns: repeat(5, 1fr);
-  }
 }
 
 .kpi-card {
@@ -222,7 +251,7 @@ body {
 }
 
 .kpi-card h4 {
-  font-size: 0.7rem;
+  font-size: 0.72rem;
   color: var(--text-muted);
   text-transform: uppercase;
 }
@@ -239,13 +268,11 @@ body {
 .text-danger { color: var(--danger); }
 .text-accent { color: var(--accent); }
 
-/* Quick Banner */
 .quick-banner {
   background: #fff;
   padding: 18px;
   border-radius: 8px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-  margin-bottom: 20px;
 }
 
 .quick-banner h4 { font-size: 1.05rem; margin-bottom: 4px; }
@@ -267,49 +294,26 @@ body {
 .btn-quick { background: var(--primary); color: #fff; border: none; }
 .btn-quick-outline { background: none; border: 1px solid var(--primary); color: var(--primary); }
 
-/* Columnas de los Módulos */
-.admin-two-cols {
+/* Barra de Filtro en Tabla */
+.card-table-bar {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-}
-
-@media (min-width: 992px) {
-  .admin-two-cols {
-    display: grid;
-    grid-template-columns: 380px 1fr;
-    gap: 20px;
-    align-items: start;
-  }
-}
-
-.admin-card {
-  background: var(--card-bg);
-  padding: 16px;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-  margin-bottom: 16px;
-}
-
-.admin-card h4 {
-  font-size: 1.05rem;
+  gap: 10px;
   margin-bottom: 14px;
 }
 
-.card-table-bar {
+.table-bar-controls {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  gap: 8px;
   flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 12px;
 }
 
-.card-table-bar input {
-  padding: 6px 10px;
+.table-bar-controls select, .table-bar-controls input {
+  padding: 7px 10px;
   border: 1px solid var(--border);
   border-radius: 6px;
   font-size: 0.85rem;
+  background: #fff;
 }
 
 /* Upload interactivo */
@@ -320,7 +324,7 @@ body {
   text-align: center;
   cursor: pointer;
   background: #fafafa;
-  min-height: 100px;
+  min-height: 105px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -338,7 +342,7 @@ body {
 
 .preview-img {
   max-width: 100%;
-  max-height: 160px;
+  max-height: 150px;
   border-radius: 6px;
   object-fit: cover;
 }
@@ -386,17 +390,18 @@ body {
 .table-responsive {
   width: 100%;
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .admin-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.8rem;
-  min-width: 480px;
+  font-size: 0.82rem;
+  min-width: 500px;
 }
 
 .admin-table th, .admin-table td {
-  padding: 8px 10px;
+  padding: 9px 10px;
   text-align: left;
   border-bottom: 1px solid var(--border);
 }
@@ -432,3 +437,48 @@ body {
 }
 
 .text-center { text-align: center; }
+
+/* ========================================================
+   REGLAS PARA PANTALLAS DE COMPUTADORA (>= 992px)
+======================================================== */
+@media (min-width: 992px) {
+  .hamburger-btn {
+    display: none;
+  }
+
+  .user-greeting {
+    display: inline;
+  }
+
+  /* Sidebar estático pegado a la izquierda */
+  .admin-sidebar {
+    position: sticky;
+    top: 58px;
+    height: calc(100vh - 58px);
+    transform: translateX(0);
+    flex-shrink: 0;
+  }
+
+  .admin-main-content {
+    padding: 24px 30px;
+  }
+
+  /* Grid de dos columnas: Izquierda Formulario (380px) - Derecha Tabla (1fr) */
+  .admin-two-cols {
+    display: grid;
+    grid-template-columns: 380px 1fr;
+    gap: 24px;
+    align-items: start;
+  }
+
+  .card-table-bar {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .kpi-grid {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
+  }
+}

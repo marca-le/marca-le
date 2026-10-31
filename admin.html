@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Marca LE | Panel Administrativo Integral</title>
+  <title>Marca LE | Panel Administrativo</title>
   <link rel="stylesheet" href="css/admin.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
-  <!-- Barra de Encabezado Superior -->
+  <!-- Barra de Encabezado Superior Fija -->
   <header class="admin-topbar">
     <div class="topbar-left">
       <button class="hamburger-btn" id="btnHamburger" onclick="toggleSidebar()">☰</button>
@@ -25,9 +25,10 @@
     </div>
   </header>
 
+  <!-- Contenedor Flex Principal (Sidebar + Contenido) -->
   <div class="admin-wrapper">
-    
-    <!-- Barra Lateral de Navegación (Sidebar) -->
+
+    <!-- Menú Lateral (Sidebar) -->
     <aside class="admin-sidebar" id="adminSidebar">
       <nav class="sidebar-menu">
         <button class="menu-item active" onclick="mostrarModulo('dashboard', this)">
@@ -48,7 +49,10 @@
       </nav>
     </aside>
 
-    <!-- Contenedor Principal de Módulos -->
+    <!-- Overlay oscuro para cerrar menú en celular -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <!-- Área de Contenido Dinámico -->
     <main class="admin-main-content">
 
       <!-- ================= MODULO 1: DASHBOARD ================= -->
@@ -81,10 +85,9 @@
           </div>
         </div>
 
-        <!-- Acceso Rápido -->
         <div class="quick-banner">
           <h4>¿Nueva mercadería recibida?</h4>
-          <p>Podés subir prendas con foto desde el celular o registrar ventas cerradas en la feria.</p>
+          <p>Podés dar de alta prendas con foto desde el celular o registrar ventas cerradas en la feria.</p>
           <div class="quick-actions">
             <button class="btn-quick" onclick="mostrarModulo('prendas')">+ Añadir Prenda</button>
             <button class="btn-quick-outline" onclick="mostrarModulo('ventas')">+ Registrar Venta</button>
@@ -100,11 +103,10 @@
         </div>
 
         <div class="admin-two-cols">
-          <!-- Formulario Alta de Prenda -->
-          <div class="admin-card">
+          <!-- Columna Izquierda: Formulario -->
+          <div class="admin-card form-box">
             <h4>➕ Registrar Prenda</h4>
             <form id="formPrenda">
-              
               <div class="form-group">
                 <label>Foto de la Prenda *</label>
                 <div class="upload-zone" id="uploadZone" onclick="document.getElementById('foto').click()">
@@ -176,11 +178,12 @@
             </form>
           </div>
 
-          <!-- Tabla de Prendas -->
+          <!-- Columna Derecha: Tabla de Inventario -->
+          <div class="admin-card table-box">
             <div class="card-table-bar">
               <h4>📦 Stock Registrado</h4>
-              <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                <select id="filterEstadoAdmin" style="padding: 6px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.85rem; background: #fff;">
+              <div class="table-bar-controls">
+                <select id="filterEstadoAdmin">
                   <option value="disponible" selected>En Percha (Disponibles)</option>
                   <option value="todos">Ver Todo el Historial</option>
                   <option value="reservado">Reservadas</option>
@@ -218,8 +221,8 @@
         </div>
 
         <div class="admin-two-cols">
-          <!-- Formulario Registro de Venta -->
-          <div class="admin-card">
+          <!-- Formulario Venta -->
+          <div class="admin-card form-box">
             <h4>💵 Registrar Nueva Venta</h4>
             <form id="formVenta">
               <div class="form-group">
@@ -250,7 +253,7 @@
           </div>
 
           <!-- Historial de Ventas -->
-          <div class="admin-card">
+          <div class="admin-card table-box">
             <h4>📋 Historial de Ventas Concretadas</h4>
             <div class="table-responsive">
               <table class="admin-table">
@@ -281,7 +284,7 @@
 
         <div class="admin-two-cols">
           <!-- Formulario Proveedor -->
-          <div class="admin-card">
+          <div class="admin-card form-box">
             <h4>➕ Registrar Proveedor</h4>
             <form id="formProveedor">
               <div class="form-group">
@@ -306,8 +309,8 @@
             </form>
           </div>
 
-          <!-- Lista de Proveedores -->
-          <div class="admin-card">
+          <!-- Lista Proveedores -->
+          <div class="admin-card table-box">
             <h4>🏢 Proveedores Guardados</h4>
             <div class="table-responsive">
               <table class="admin-table">
@@ -336,6 +339,7 @@
         </div>
 
         <div class="admin-card">
+          <h4>👥 Directorio de Cuentas</h4>
           <div class="table-responsive">
             <table class="admin-table">
               <thead>

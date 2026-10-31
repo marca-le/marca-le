@@ -1,38 +1,41 @@
+// Variables globales de datos
 let prendasAdmin = [];
 let ventasAdmin = [];
 let proveedoresAdmin = [];
 let usuariosAdmin = [];
 
 document.addEventListener("DOMContentLoaded", () => {
-  // 1. Guardia de Seguridad: Validar que sea ADMINISTRADOR
+  // 1. Guardia de Seguridad: Validar que el usuario autenticado sea ADMINISTRADOR
   verificarPermisosAdmin();
 
-  // 2. Cargar datos de todos los módulos
+  // 2. Cargar la información de todos los módulos
   cargarModuloPrendas();
   cargarModuloVentas();
   cargarModuloProveedores();
   cargarModuloUsuarios();
 
-  // 3. Event listeners
+  // 3. Event Listeners de formularios
   document.getElementById("formPrenda").addEventListener("submit", registrarPrenda);
   document.getElementById("formVenta").addEventListener("submit", registrarVenta);
   document.getElementById("formProveedor").addEventListener("submit", registrarProveedor);
-  
-  // Filtros combinados de tabla prendas
+
+  // 4. Filtros reactivos en la tabla de prendas
   document.getElementById("searchPrendas").addEventListener("input", filtrarTablaPrendas);
   const filterEstado = document.getElementById("filterEstadoAdmin");
   if (filterEstado) {
     filterEstado.addEventListener("change", filtrarTablaPrendas);
   }
 
-  // Upload Preview
+  // 5. Previsualización interactiva de la fotografía
   document.getElementById("foto").addEventListener("change", previewFoto);
 });
 
-// Guardia de Seguridad: Si no es admin, fuera a index.html
+/* ========================================================
+   GUARDIA DE SEGURIDAD Y SESIÓN
+======================================================== */
 function verificarPermisosAdmin() {
   const sesionStr = localStorage.getItem("sesion_usuario_marcale");
-  
+
   if (!sesionStr) {
     alert("Acceso denegado: Debes iniciar sesión con tu cuenta de administrador.");
     window.location.href = "index.html";
@@ -41,26 +44,43 @@ function verificarPermisosAdmin() {
 
   const usuario = JSON.parse(sesionStr);
   if (usuario.rol !== "admin") {
-    alert(`Acceso denegado: La cuenta ${usuario.email} no tiene permisos de administrador.`);
+    alert(`Acceso denegado: La cuenta ${usuario.email} no cuenta con permisos administrativos.`);
     window.location.href = "index.html";
     return;
   }
 
-  document.getElementById("adminGreeting").innerText = `Hola, ${usuario.nombre_completo}`;
+  const greetingElem = document.getElementById("adminGreeting");
+  if (greetingElem) {
+    greetingElem.innerText = `Hola, ${usuario.nombre_completo}`;
+  }
 }
 
-// Menú Lateral Móvil (Hamburguesa)
+function cerrarSesionAdmin() {
+  if (confirm("¿Deseas cerrar tu sesión de administrador?")) {
+    localStorage.removeItem("sesion_usuario_marcale");
+    window.location.href = "index.html";
+  }
+}
+
+/* ========================================================
+   NAVEGACIÓN RESPONSIVA Y MODULAR (SPA)
+======================================================== */
 function toggleSidebar() {
-  document.getElementById("adminSidebar").classList.toggle("show");
+  const sidebar = document.getElementById("adminSidebar");
+  const overlay = document.getElementById("sidebarOverlay");
+  if (sidebar) sidebar.classList.toggle("show");
+  if (overlay) overlay.classList.toggle("show");
 }
 
-// Navegación entre Módulos SPA
 function mostrarModulo(idModulo, botonMenu = null) {
+  // Ocultar todos los paneles de módulos
   document.querySelectorAll(".module-pane").forEach(pane => pane.classList.remove("active"));
-  
+
+  // Activar el panel seleccionado
   const panel = document.getElementById(`pane-${idModulo}`);
   if (panel) panel.classList.add("active");
 
+  // Actualizar estado activo en los botones del sidebar
   document.querySelectorAll(".menu-item").forEach(item => item.classList.remove("active"));
   if (botonMenu) {
     botonMenu.classList.add("active");
@@ -69,11 +89,15 @@ function mostrarModulo(idModulo, botonMenu = null) {
     if (btn) btn.classList.add("active");
   }
 
-  document.getElementById("adminSidebar").classList.remove("show");
+  // Cerrar el sidebar y el overlay en pantallas móviles
+  const sidebar = document.getElementById("adminSidebar");
+  const overlay = document.getElementById("sidebarOverlay");
+  if (sidebar) sidebar.classList.remove("show");
+  if (overlay) overlay.classList.remove("show");
 }
 
 /* ========================================================
-   MODULO 1 Y 2: PRENDAS Y DASHBOARD
+   MÓDULO 1 Y 2: GESTIÓN DE PRENDAS E INVENTARIO
 ======================================================== */
 async function cargarModuloPrendas() {
   const tbody = document.getElementById("tablaPrendasBody");
@@ -87,7 +111,7 @@ async function cargarModuloPrendas() {
     prendasAdmin = data || [];
 
     actualizarKPIs();
-    filtrarTablaPrendas(); // Renderiza aplicando el filtro (por defecto 'disponible')
+    filtrarTablaPrendas();
     actualizarSelectPrendasParaVenta(prendasAdmin);
   } catch (err) {
     tbody.innerHTML = `<tr><td colspan="6" class="text-center" style="color:red;">Error: ${err.message}</td></tr>`;
@@ -205,13 +229,13 @@ async function cambiarEstadoPrenda(id, estado) {
   try {
     const { error } = await supabaseClient.from("prendas").update({ estado }).eq("id", id);
     if (error) throw error;
-    
+
     const item = prendasAdmin.find(p => p.id === id);
     if (item) item.estado = estado;
-    
+
     actualizarKPIs();
     actualizarSelectPrendasParaVenta(prendasAdmin);
-    filtrarTablaPrendas(); // Si cambia a vendido, se quitará de la vista 'disponible' automáticamente
+    filtrarTablaPrendas();
   } catch (err) {
     alert(`Error: ${err.message}`);
     cargarModuloPrendas();
@@ -219,10 +243,11 @@ async function cambiarEstadoPrenda(id, estado) {
 }
 
 async function eliminarPrenda(id, codigo) {
-  if (!confirm(`¿Deseas eliminar la prenda ${codigo}?`)) return;
+  if (!confirm(`¿Deseas eliminar la prenda con código ${codigo}?`)) return;
   try {
     const { error } = await supabaseClient.from("prendas").delete().eq("id", id);
     if (error) throw error;
+
     prendasAdmin = prendasAdmin.filter(p => p.id !== id);
     actualizarKPIs();
     filtrarTablaPrendas();
@@ -249,7 +274,7 @@ function previewFoto() {
 }
 
 /* ========================================================
-   MODULO 3: VENTAS REALIZADAS
+   MÓDULO 3: REGISTRO DE VENTAS REALIZADAS
 ======================================================== */
 async function cargarModuloVentas() {
   const tbody = document.getElementById("tablaVentasBody");
@@ -282,7 +307,7 @@ function renderizarTablaVentas(lista) {
     tr.innerHTML = `
       <td><strong>${v.codigo_venta}</strong></td>
       <td>${v.cliente_nombre}</td>
-      <td>${v.codigo_prenda || ''} - ${v.nombre_prenda}</td>
+      <td>${v.codigo_prenda ? v.codigo_prenda + ' - ' : ''}${v.nombre_prenda}</td>
       <td><strong>${parseFloat(v.monto_cobrado).toFixed(2)} Bs.</strong></td>
       <td><span style="font-size:0.75rem;">${v.metodo_pago}</span></td>
     `;
@@ -292,9 +317,9 @@ function renderizarTablaVentas(lista) {
 
 function actualizarSelectPrendasParaVenta(prendas) {
   const select = document.getElementById("ventasPrendaSelect");
+  if (!select) return;
   select.innerHTML = `<option value="">Seleccione una prenda disponible...</option>`;
 
-  // Mostrar únicamente prendas en estado "disponible"
   prendas.filter(p => p.estado === "disponible").forEach(p => {
     const opt = document.createElement("option");
     opt.value = p.id;
@@ -307,7 +332,7 @@ function actualizarSelectPrendasParaVenta(prendas) {
 
   select.onchange = () => {
     const seleccionada = select.options[select.selectedIndex];
-    if (seleccionada.dataset.precio) {
+    if (seleccionada && seleccionada.dataset.precio) {
       document.getElementById("ventasMonto").value = seleccionada.dataset.precio;
     }
   };
@@ -317,8 +342,8 @@ async function registrarVenta(e) {
   e.preventDefault();
   const select = document.getElementById("ventasPrendaSelect");
   const opt = select.options[select.selectedIndex];
-  if (!opt.value) {
-    alert("Por favor selecciona una prenda.");
+  if (!opt || !opt.value) {
+    alert("Por favor selecciona una prenda disponible.");
     return;
   }
 
@@ -335,7 +360,7 @@ async function registrarVenta(e) {
 
     const codigoVenta = "VTA-" + Math.floor(1000 + Math.random() * 9000);
 
-    // 1. Guardar la venta en la tabla 'ventas'
+    // 1. Insertar la venta en la tabla 'ventas'
     const { error: errorVenta } = await supabaseClient.from("ventas").insert([{
       codigo_venta: codigoVenta,
       cliente_nombre: cliente,
@@ -348,7 +373,7 @@ async function registrarVenta(e) {
 
     if (errorVenta) throw errorVenta;
 
-    // 2. Marcar la prenda como "vendido" en la tabla 'prendas'
+    // 2. Actualizar el estado de la prenda a "vendido"
     await supabaseClient.from("prendas").update({ estado: "vendido" }).eq("id", prendaId);
 
     alert(`¡Venta ${codigoVenta} confirmada! La prenda se marcó como VENDIDA y salió del stock en percha.`);
@@ -363,12 +388,16 @@ async function registrarVenta(e) {
 }
 
 /* ========================================================
-   MODULO 4: PROVEEDORES
+   MÓDULO 4: PROVEEDORES DE PACAS
 ======================================================== */
 async function cargarModuloProveedores() {
   const tbody = document.getElementById("tablaProveedoresBody");
   try {
-    const { data, error } = await supabaseClient.from("proveedores").select("*").order("created_at", { ascending: false });
+    const { data, error } = await supabaseClient
+      .from("proveedores")
+      .select("*")
+      .order("created_at", { ascending: false });
+
     if (error) throw error;
     proveedoresAdmin = data || [];
     renderizarTablaProveedores(proveedoresAdmin);
@@ -380,10 +409,12 @@ async function cargarModuloProveedores() {
 function renderizarTablaProveedores(lista) {
   const tbody = document.getElementById("tablaProveedoresBody");
   tbody.innerHTML = "";
+
   if (lista.length === 0) {
     tbody.innerHTML = `<tr><td colspan="4" class="text-center">No hay proveedores registrados.</td></tr>`;
     return;
   }
+
   lista.forEach(prov => {
     const tr = document.createElement("tr");
     tr.innerHTML = `
@@ -405,6 +436,7 @@ async function registrarProveedor(e) {
       ciudad_origen: document.getElementById("provCiudad").value.trim(),
       tipo_paca: document.getElementById("provTipo").value.trim()
     };
+
     const { error } = await supabaseClient.from("proveedores").insert([nuevo]);
     if (error) throw error;
 
@@ -417,12 +449,16 @@ async function registrarProveedor(e) {
 }
 
 /* ========================================================
-   MODULO 5: USUARIOS REGISTRADOS
+   MÓDULO 5: CLIENTES / USUARIOS REGISTRADOS
 ======================================================== */
 async function cargarModuloUsuarios() {
   const tbody = document.getElementById("tablaUsuariosBody");
   try {
-    const { data, error } = await supabaseClient.from("usuarios").select("*").order("created_at", { ascending: false });
+    const { data, error } = await supabaseClient
+      .from("usuarios")
+      .select("*")
+      .order("created_at", { ascending: false });
+
     if (error) throw error;
     usuariosAdmin = data || [];
     renderizarTablaUsuarios(usuariosAdmin);
@@ -434,10 +470,12 @@ async function cargarModuloUsuarios() {
 function renderizarTablaUsuarios(lista) {
   const tbody = document.getElementById("tablaUsuariosBody");
   tbody.innerHTML = "";
+
   if (lista.length === 0) {
     tbody.innerHTML = `<tr><td colspan="5" class="text-center">No hay usuarios registrados.</td></tr>`;
     return;
   }
+
   lista.forEach(u => {
     const tr = document.createElement("tr");
     tr.innerHTML = `
@@ -452,7 +490,7 @@ function renderizarTablaUsuarios(lista) {
 }
 
 /* ========================================================
-   KPIS DEL DASHBOARD
+   KPIS GENERALES DEL DASHBOARD
 ======================================================== */
 function actualizarKPIs() {
   document.getElementById("kpiTotal").innerText = prendasAdmin.length;
@@ -461,12 +499,8 @@ function actualizarKPIs() {
   document.getElementById("kpiVendidas").innerText = prendasAdmin.filter(p => p.estado === 'vendido').length;
 
   const totalBs = ventasAdmin.reduce((acc, curr) => acc + (parseFloat(curr.monto_cobrado) || 0), 0);
-  document.getElementById("kpiTotalVentasBs").innerText = `${totalBs.toFixed(2)} Bs.`;
-}
-
-function cerrarSesionAdmin() {
-  if (confirm("¿Cerrar sesión de administrador?")) {
-    localStorage.removeItem("sesion_usuario_marcale");
-    window.location.href = "index.html";
+  const kpiVentasElem = document.getElementById("kpiTotalVentasBs");
+  if (kpiVentasElem) {
+    kpiVentasElem.innerText = `${totalBs.toFixed(2)} Bs.`;
   }
 }
